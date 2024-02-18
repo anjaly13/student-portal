@@ -32,8 +32,13 @@ namespace student_portal.Services
 
         public async Task<List<Student>> getAllStudentsAsync()
         {
-            var student = await _studentPortalDbContext.Student.Include(_ => _.Address).ToListAsync();
-            return student;
+
+            var student = await _studentPortalDbContext.Student.Select(x=>new Student { 
+            StudentName = x.StudentName
+            }).ToListAsync();
+
+            var students = await _studentPortalDbContext.Student.FromSql($"SELECT st.studentName FROM student st").ToListAsync();
+            return students;
         }
 
         /*private Student MapStudentObject(StudentDTO studentDTO) {

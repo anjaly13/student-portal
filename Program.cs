@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using student_portal.Data;
+using student_portal.Resolvers;
 using student_portal.Services;
+using student_portal.Services.GraphQLServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +17,9 @@ builder.Services.AddDbContext<StudentPortalDbContext>(options => {
     options.UseMySQL(builder.Configuration.GetConnectionString("schoolPortal"));
 });
 
+builder.Services.AddGraphQLServer().AddQueryType<QueryType>().AddMutationType<MutationType>();
 builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IStudentGQL, StudentServiceGQL>();
 
 var app = builder.Build();
 
@@ -31,5 +35,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGraphQL();
 
 app.Run();
